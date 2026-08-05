@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        rel="icon"
+        href="logo.png"
+        type="image/x-icon"
+    >
+
+    <title>Golden Pumpkin Restaurant | eMenu</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+
+            margin: 0;
+
+            width: 100%;
+            height: 100%;
+
+            overflow-x: hidden;
+
+            background: #525659;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+        }
+
+
+        /* ========================================
+           SPLASH SCREEN
+        ======================================== */
+
+        #splash-screen {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 9999;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    #292d30 0%,
+                    #181a1c 45%,
+                    #0d0e0f 100%
+                );
+
+            opacity: 1;
+
+            visibility: visible;
+
+            transition:
+                opacity 0.8s ease,
+                visibility 0.8s ease;
+
+        }
+
+
+        #splash-screen.hide {
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+
+        }
+
+
+        .splash-content {
+
+            width: 90%;
+
+            max-width: 420px;
+
+            text-align: center;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+        }
+
+
+        /* ========================================
+           LOGO
+        ======================================== */
+
+        .logo-wrapper {
+
+            width: 130px;
+
+            height: 130px;
+
+            margin-bottom: 25px;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            border-radius: 50%;
+
+            background: rgba(255,255,255,0.05);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.1);
+
+            box-shadow:
+
+                0 0 0 10px
+                rgba(255,255,255,0.02),
+
+                0 20px 50px
+                rgba(0,0,0,0.4);
+
+            animation:
+                logoFloat 3s ease-in-out infinite;
+
+        }
+
+
+        .logo-wrapper img {
+
+            width: 100px;
+
+            height: 100px;
+
+            object-fit: contain;
+
+            border-radius: 50%;
+
+        }
+
+
+        @keyframes logoFloat {
+
+            0%,
+            100% {
+
+                transform:
+                    translateY(0);
+
+            }
+
+            50% {
+
+                transform:
+                    translateY(-8px);
+
+            }
+
+        }
+
+
+        /* ========================================
+           BRAND
+        ======================================== */
+
+        .brand-title {
+
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 28px;
+
+            font-weight: 700;
+
+            letter-spacing: 3px;
+
+        }
+
+
+        .brand-subtitle {
+
+            margin-top: 10px;
+
+            color: rgba(255,255,255,0.55);
+
+            font-size: 13px;
+
+            letter-spacing: 4px;
+
+            text-transform: uppercase;
+
+        }
+
+
+        /* ========================================
+           LOADING
+        ======================================== */
+
+        .loading-area {
+
+            width: 100%;
+
+            max-width: 280px;
+
+            margin-top: 45px;
+
+        }
+
+
+        .loading-text {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 10px;
+
+            color:
+                rgba(255,255,255,0.65);
+
+            font-size: 12px;
+
+        }
+
+
+        .loading-bar {
+
+            width: 100%;
+
+            height: 3px;
+
+            overflow: hidden;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255,255,255,0.12);
+
+        }
+
+
+        .loading-progress {
+
+            width: 40%;
+
+            height: 100%;
+
+            border-radius: 10px;
+
+            background: #ffffff;
+
+            animation:
+                loadingAnimation
+                1.5s
+                ease-in-out
+                infinite;
+
+        }
+
+
+        @keyframes loadingAnimation {
+
+            0% {
+
+                transform:
+                    translateX(-150%);
+
+            }
+
+            100% {
+
+                transform:
+                    translateX(350%);
+
+            }
+
+        }
+
+
+        /* ========================================
+           FOOTER
+        ======================================== */
+
+        .splash-footer {
+
+            position: absolute;
+
+            bottom: 25px;
+
+            left: 0;
+
+            right: 0;
+
+            text-align: center;
+
+            color:
+                rgba(255,255,255,0.25);
+
+            font-size: 11px;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        /* ========================================
+           ERROR
+        ======================================== */
+
+        #error {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 10000;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background: #181a1c;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 30px;
+
+        }
+
+
+        .error-content {
+
+            max-width: 400px;
+
+        }
+
+
+        .error-icon {
+
+            font-size: 50px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .error-title {
+
+            font-size: 24px;
+
+            font-weight: 600;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .error-message {
+
+            color:
+                rgba(255,255,255,0.6);
+
+            font-size: 14px;
+
+        }
+
+
+        .retry-button {
+
+            margin-top: 25px;
+
+            padding: 12px 30px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: white;
+
+            color: #181a1c;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+        }
+
+
+        /* ========================================
+           MENU
+        ======================================== */
+
+        #menu-container {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            padding: 20px;
+
+            opacity: 0;
+
+            transition:
+                opacity 0.8s ease;
+
+        }
+
+
+        #menu-container.show {
+
+            opacity: 1;
+
+        }
+
+
+        canvas {
+
+            display: block;
+
+            margin-bottom: 20px;
+
+            max-width: 100%;
+
+            height: auto;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 10px 20px
+                rgba(0,0,0,0.3);
+
+        }
+
+
+        /* ========================================
+           MOBILE
+        ======================================== */
+
+        @media
+        (max-width: 480px) {
+
+            .logo-wrapper {
+
+                width: 110px;
+
+                height: 110px;
+
+            }
+
+
+            .logo-wrapper img {
+
+                width: 85px;
+
+                height: 85px;
+
+            }
+
+
+            .brand-title {
+
+                font-size: 22px;
+
+                letter-spacing: 2px;
+
+            }
+
+
+            .brand-subtitle {
+
+                font-size: 10px;
+
+                letter-spacing: 3px;
+
+            }
+
+
+            .loading-area {
+
+                margin-top: 35px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ========================================
+         SPLASH SCREEN
+    ======================================== -->
+
+    <div id="splash-screen">
+
+        <div class="splash-content">
+
+
+            <div class="logo-wrapper">
+
+                <img
+                    src="logo.png"
+                    alt="Golden Pumpkin Restaurant"
+                >
+
+            </div>
+
+
+            <h1 class="brand-title">
+                Golden Pumpkin Restaurant - eMenu
+            </h1>
+
+
+            <div class="brand-subtitle">
+                Digital Menu
+            </div>
+
+
+            <div class="loading-area">
+
+                <div class="loading-text">
+
+                    <span>
+                        Loading Menu
+                    </span>
+
+                    <span>
+                        Please wait
+                    </span>
+
+                </div>
+
+
+                <div class="loading-bar">
+
+                    <div
+                        class="loading-progress">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="splash-footer">
+
+            Welcome to Golden Pumpkin Restaurant
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================
+         ERROR SCREEN
+    ======================================== -->
+
+    <div id="error">
+
+        <div class="error-content">
+
+            <div class="error-icon">
+                ⚠
+            </div>
+
+            <div class="error-title">
+
+                Menu Unavailable
+
+            </div>
+
+            <div
+                id="error-message"
+                class="error-message"
+            >
+
+                Unable to load the menu.
+                Please try again.
+
+            </div>
+
+            <button
+                class="retry-button"
+                onclick="location.reload()"
+            >
+
+                Try Again
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================
+         MENU
+    ======================================== -->
+
+    <div id="menu-container"></div>
+
+
+    <script>
+
+const container =
+    document.getElementById("menu-container");
+
+const splash =
+    document.getElementById("splash-screen");
+
+const errorScreen =
+    document.getElementById("error");
+
+const errorMessage =
+    document.getElementById("error-message");
+
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
+
+async function renderPDF() {
+
+    try {
+
+        // PDF file in the same folder as index.html
+        const pdfUrl = "./MENU.pdf";
+
+        // Load PDF
+        const pdf = await pdfjsLib
+            .getDocument(pdfUrl)
+            .promise;
+
+        /*
+         * PDF is now loaded.
+         *
+         * DON'T wait for all pages.
+         *
+         * Start rendering pages in background.
+         */
+        for (
+            let pageNum = 1;
+            pageNum <= pdf.numPages;
+            pageNum++
+        ) {
+
+            renderPage(
+                pdf,
+                pageNum
+            ).catch(error => {
+
+                console.error(
+                    `Error rendering page ${pageNum}:`,
+                    error
+                );
+
+            });
+
+        }
+
+        /*
+         * Show menu immediately.
+         *
+         * No await renderPage()
+         * No waiting for all pages.
+         */
+        container.classList.add("show");
+
+        /*
+         * Hide splash immediately.
+         */
+        splash.classList.add("hide");
+
+    } catch (error) {
+
+        console.error(
+            "Error loading PDF:",
+            error
+        );
+
+        splash.classList.add("hide");
+
+        errorMessage.innerText =
+            error.message ||
+            "Unable to load menu.";
+
+        errorScreen.style.display = "flex";
+    }
+
+}
+
+
+async function renderPage(
+    pdf,
+    pageNum
+) {
+
+    const page =
+        await pdf.getPage(
+            pageNum
+        );
+
+
+    const scale = 1.5;
+
+
+    const viewport =
+        page.getViewport({
+            scale: scale
+        });
+
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+
+    const context =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    canvas.height =
+        viewport.height;
+
+
+    canvas.width =
+        viewport.width;
+
+
+    /*
+     * Add canvas immediately.
+     *
+     * It will appear when rendering
+     * is completed.
+     */
+
+    container.appendChild(
+        canvas
+    );
+
+
+    await page.render({
+
+        canvasContext:
+            context,
+
+        viewport:
+            viewport
+
+    }).promise;
+
+
+    page.cleanup();
+
+}
+
+
+// Start
+renderPDF();
+
+</script>
+
+
+</body>
+
+</html>
